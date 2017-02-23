@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Load CSV files stored in Wettermast format.
+
+Attributes:
+    variable_dtypes (dict): Stores the dtype related to a variable name.
 """
 import re
 
@@ -7,11 +10,17 @@ from matplotlib.dates import strpdate2num
 import numpy as np
 
 
-__all__ = ['read',
-           'read_profile',
-           'read_scat',
-           'write_dict',
-           ]
+__all__ = [
+    'read',
+    'read_profile',
+    'read_scat',
+    'write',
+]
+
+variable_dtypes = {
+    'DATE': '<U10',
+    'TIME': '<U5',
+}
 
 
 def _get_mpl_date(dates, fmt='%d.%m.%Y %H:%M'):
@@ -25,13 +34,12 @@ def _get_mpl_date(dates, fmt='%d.%m.%Y %H:%M'):
 
     Returns:
         np.array: Matplotlib time values.
-
     """
     return np.array([strpdate2num(fmt)(d) for d in dates])
 
 
 def _get_names(filename):
-    """Get variable names from CSV file.
+    """Get variable names from CSV file header.
 
     Parameters:
         filename (str): Path to CSV file.
@@ -45,49 +53,21 @@ def _get_names(filename):
                 return line.decode().split('=')[1].replace(';', ',').strip()
 
 
-def _get_dtype(variable):
-    """Define dtypes for variables in CSV files.
-
-    Parameters:
-        variable (str): Variable name.
-
-    Returns:
-        str: dtype of given variable.
-    """
-    variable_dtypes = {
-            'DATE': '<U10',
-            'TIME': '<U5',
-            }
-
-    if variable in variable_dtypes:
-        dtype = variable_dtypes[variable]
-    else:
-        dtype = 'f8'
-
-    return dtype
-
-
-#TODO: The whole stacking functionality is extremely buggy. There are a lot of
-# cases where stacking should not be done (e.g. height levels). Currently there
-# is no proper way to avoid this.
-def read(filename, variables=None, stack=True,
-         exclude_stack=None, output=None):
+def read(filename, variables=None, delimiter=';', skip_header=7, output=None):
     """Read CSV files.
 
     Parameters:
         filename (str): Path to CSV file.
         variables (List[str]): List of variables to extract.
-        stack (bool): Stack dict entries if key already exists.
-        exclude_stack (list[str]): Variables that should not be stacked
-            (e.g.  'PROFILE_Z').
+        delimiter (str): The string used to separate values.
+        skip_header (int): Number of lines to skip the beginning of the file.
         output (dict): Dictionary that is updated with read data.
 
     Returns:
         dict: Dictionary containing the data arrays.
-
     """
     names = _get_names(filename)
-    dtype = [(n, _get_dtype(n)) for n in names.split(',')]
+    dtype = [(n, variable_dtypes.get(n, 'f8')) for n in names.split(',')]
 
     # Read DATE and TIME even if they are not explicitly listed.
     if variables is not None:
@@ -96,14 +76,11 @@ def read(filename, variables=None, stack=True,
         variables = names.split(',')
         usecols = None
 
-    if exclude_stack is None:
-        exclude_stack = []
-
     with open(filename, 'rb') as f:
         data = np.genfromtxt(
             f,
-            delimiter=';',
-            skip_header=7,
+            delimiter=delimiter,
+            skip_header=skip_header,
             dtype=dtype,
             names=names,
             usecols=usecols,
@@ -114,31 +91,21 @@ def read(filename, variables=None, stack=True,
         output = {var: data[var] for var in variables}
     else:
         for var in variables:
-            if stack is True and var in output and var not in exclude_stack:
-                output[var] = np.hstack((output[var], data[var]))
-            else:
-                output[var] = data[var]
+            output[var] = data[var]
 
     # Always convert DATE and TIME into matplotlib time.
     dates = [' '.join(d) for d in zip(data['DATE'], data['TIME'])]
-    if (stack and 'MPLTIME' in output and 'MPLTIME' not in exclude_stack):
-        # Only stack MPLTIME if it is already there and not permitted.
-        output['MPLTIME'] = np.hstack(
-            (output['MPLTIME'], _get_mpl_date(dates)))
-    else:
-        output['MPLTIME'] = _get_mpl_date(dates)
+    output['MPLTIME'] = _get_mpl_date(dates)
 
     return output
 
 
-def read_profile(filename, dz=10, var_regex=None, var_key='PROFILE',
-                 stack=True, exclude_stack=None, output=None):
+def read_profile(filename, var_regex=None, var_key='PROFILE', output=None):
     """Read scattering coefficients from CSV file.
 
     Parameters:
         filename (str): Path to CSV file.
         output (dict): Dictionary that is updated with read data.
-        dz (float): Height resolution.
         var_regex (str): Python regular expression [0] matching
             the variable name of the profile.
         var_key (str): Dictionary key for extracted profile.
@@ -147,21 +114,10 @@ def read_profile(filename, dz=10, var_regex=None, var_key='PROFILE',
 
     Returns:
         np.ndarray: Profile.
-
     """
     profile_key = var_key + '_Z'
 
-    if exclude_stack is None:
-        exclude_stack = []
-
-    exclude_stack.append(profile_key)
-
-    output = read(
-        filename,
-        stack=stack,
-        exclude_stack=exclude_stack,
-        output=output,
-        )
+    output = read(filename, output=output)
 
     p = re.compile(var_regex)
 
@@ -179,13 +135,13 @@ def read_profile(filename, dz=10, var_regex=None, var_key='PROFILE',
     return output
 
 
-def read_scat(filename, var_regex='CLB_B\d{5}', output=None):
+def read_scat(filename, var_regex='CLB_B\d{5}', var_key='CLB_MATRIX',
+              output=None):
     """Read scattering coefficients from CSV file.
 
     Parameters:
         filename (str): Path to CSV file.
         output (dict): Dictionary that is updated with read data.
-        dz (float): Height resolution of the ceilometer.
         scat_name (str): Python regular expression [0] matching
             the variable name of the scattering coefficients.
 
@@ -193,32 +149,29 @@ def read_scat(filename, var_regex='CLB_B\d{5}', output=None):
 
     Returns:
         np.array, np.array: scattering coefficient, height levels
-
     """
-
     output = read_profile(
         filename,
-        stack=False,
-        var_key='CLB_MATRIX',
+        var_key=var_key,
         var_regex=var_regex,
-        output=output)
+        output=output,
+        )
 
-    back_scat = output['CLB_MATRIX']
+    back_scat = output[var_key]
     back_scat = np.ma.masked_less(back_scat, 0)
 
-    output['CLB_MATRIX'] = back_scat
+    output[var_key] = back_scat
 
     return output
 
 
-def write_dict(filename, data, variables=None):
+def write(filename, data, variables=None):
     """Write data from dictionary to CSV file.
 
     Parameters:
         filename (str): Path to CSV file.
         data (dict): Dictionary containing data.
-        variables (list[str]): Variables to store (default: all).
-
+        variables (list[str]): Variables to store.
     """
     if variables is None:
         variables = list(sorted(data.keys()))
@@ -228,13 +181,15 @@ def write_dict(filename, data, variables=None):
                 variables.remove(k)
                 variables.insert(0, k)
 
+    # TODO: Create full header information.
     header = '$Names=' + ";".join(variables)
     data = np.vstack(data[v] for v in variables).T
 
     np.savetxt(
-            filename,
-            data,
-            comments='',
-            delimiter=';',
-            header=header,
-            fmt='%s')
+        filename,
+        data,
+        comments='',
+        delimiter=';',
+        header=header,
+        fmt='%s',
+        )

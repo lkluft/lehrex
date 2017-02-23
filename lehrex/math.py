@@ -5,55 +5,14 @@ import collections
 import numpy as np
 
 
-__all__ = ['integrate_spectrum',
-           'integrate_angles',
-           'moving_average',
-           'block_average',
-           'bootstrap',
-           'correlation',
-           'rmse',
-           'compare_arrays',
-           ]
-
-
-def integrate_spectrum(f, B, factor=np.pi):
-    """Integrate a radiance spectrum.
-
-    Parameters:
-        f (np.array): Frequencies.
-        B (np.array): Radiances.
-        factor (float): Integration faktor.
-            Default pi for integration over full halfroom.
-
-    Returns:
-        float: Power [W * m**-2].
-
-    """
-    B_mean = (B[1:] + B[:-1]) / 2
-    df = np.diff(f)
-
-    return factor * np.sum(B_mean * df)
-
-
-def integrate_angles(f, y_los, los, dtheta):
-    """Integrate spectrum over frequency and angles.
-
-    Parameters:
-        f: Frequency grid [Hz].
-        y_los: Concatenated spectra for all angles.
-        los: Viewing angles.
-        dtheta (float): Angle resolution.
-
-    Retuns:
-        Integrated spectrum [W/m**2].
-
-    """
-    y_int = np.zeros(f.size)
-    for y, a in zip(np.split(y_los, los.size), los):
-        y_int += (2 * np.pi * np.sin(np.deg2rad(a))
-                  * np.cos(np.deg2rad(a)) * y
-                  * np.deg2rad(dtheta))
-    return integrate_spectrum(f, y_int, factor=1)
+__all__ = [
+    'moving_average',
+    'block_average',
+    'bootstrap',
+    'correlation',
+    'rmse',
+    'compare_arrays',
+]
 
 
 def moving_average(x, y, N, mode='same'):
@@ -82,7 +41,7 @@ def moving_average(x, y, N, mode='same'):
 
 
 def block_average(x, y, N):
-    """Calculate the average over the last N values in y.
+    """Calculate the average over windows of size N.
 
     Parameters:
         x (np.ndarray): x data.
@@ -91,7 +50,6 @@ def block_average(x, y, N):
 
     Returns:
         np.ndarray, np.ndarray: Every n-th x value, Corresponding averages.
-
     """
     x = x[N-1::N]
     y = np.array([np.nanmean(v) for v in np.split(y, y.size / N)])
@@ -116,7 +74,6 @@ def bootstrap(x, size=None):
 
     Returns:
         np.ndarray, shape (size,): The generated random samples.
-
     """
     return np.random.choice(x, size=size, replace=True)
 
@@ -130,7 +87,6 @@ def rmse(x, y):
 
     Returns:
         float: RMSE
-
     """
     return np.sqrt(np.nanmean((x - y)**2))
 
@@ -144,7 +100,6 @@ def correlation(x, y):
 
     Returns:
         float: Correlation coefficient.
-
     """
     x = np.ma.masked_invalid(x)
     y = np.ma.masked_invalid(y)
@@ -160,8 +115,7 @@ def compare_arrays(x, y, verbose=False):
         verbose (bool): Print output.
 
     Returns:
-        float: Correlation coefficient.
-
+        nametuple: Statisticl comparison of input arrays.
     """
 
     ArrayComparison = collections.namedtuple(
