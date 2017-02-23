@@ -12,3 +12,5 @@ __all__ = [
     'math',
     'plots',
 ]
+
+__version__ = '0.4'
