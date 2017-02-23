@@ -51,22 +51,42 @@ def _get_names(filename):
         for line in f:
             if line.decode().startswith('$Names='):
                 return line.decode().split('=')[1].replace(';', ',').strip()
+    raise Exception('No field names were found.')
 
 
-def read(filename, variables=None, delimiter=';', skip_header=7, output=None):
+def _get_skip_header(filename):
+    """Get number of lines to skip header of CSV file.
+
+    Parameters:
+        filename (str): Path to CSV file.
+
+    Returns:
+        int: Number of lines to skip at the beginning of the file.
+    """
+    i = 0
+    with open(filename, 'rb') as f:
+        for line in f:
+            if line.decode()[0] == '$' or line.decode()[0] == '#':
+                i += 1
+            else:
+                return i
+    raise Exception('No valid line found.')
+
+
+def read(filename, variables=None, delimiter=';', output=None):
     """Read CSV files.
 
     Parameters:
         filename (str): Path to CSV file.
         variables (List[str]): List of variables to extract.
         delimiter (str): The string used to separate values.
-        skip_header (int): Number of lines to skip the beginning of the file.
         output (dict): Dictionary that is updated with read data.
 
     Returns:
         dict: Dictionary containing the data arrays.
     """
     names = _get_names(filename)
+    skip_header = _get_skip_header(filename)
     dtype = [(n, variable_dtypes.get(n, 'f8')) for n in names.split(',')]
 
     # Read DATE and TIME even if they are not explicitly listed.
