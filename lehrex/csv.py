@@ -92,7 +92,7 @@ def _get_skip_header(filename):
     raise Exception('No valid line found.')
 
 
-def read(filename, variables=None, delimiter=';', filling_values=None,
+def read(filename, variables=None, delimiter=';', filling_values=np.nan,
          output=None, **kwargs):
     """Read CSV files.
 
