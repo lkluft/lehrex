@@ -24,14 +24,15 @@ def set_date_axis(ax=None, dateformat='%d.%m.'):
     ax.grid('on', which='both', linestyle='-')
 
 
-def timeseries(time, data, ax=None, ylabel='', **kwargs):
+def timeseries(time, data, ylabel='', dateformat='%d.%m.', ax=None, **kwargs):
     """Create a basic timeseries plot.
 
     Parameters:
         time (nd.array): Date array in matplotlib time format.
         data (nd.array): Data array.
-        ax (AxesSubplot): Matplotlib axes.
         ylabel (str): y label.
+        dateformat (str): Format string for date labels on xaxis.
+        ax (AxesSubplot): Matplotlib axes.
         **kwargs: Additional keyword arguments passed to `plt.plot`.
 
     Returns:
@@ -42,7 +43,7 @@ def timeseries(time, data, ax=None, ylabel='', **kwargs):
         ax = plt.gca()
 
     line, = ax.plot(time, data, **kwargs)
-    set_date_axis(ax)
+    set_date_axis(ax, dateformat)
 
     ax.set_xlim(time.min(), time.max())
     ax.set_xlabel('Datum')
