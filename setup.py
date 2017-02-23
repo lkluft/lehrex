@@ -12,10 +12,11 @@ setup(
     author='Lukas Kluft',
     author_email='lukas.kluft@gmail.com',
     url='https://github.com/lkluft/lehrex',
-    download_url='https://github.com/lkluft/lehrex/tarball/0.1.1',
-    version='0.1.1',
+    download_url='https://github.com/lkluft/lehrex/tarball/0.2',
+    version='0.2',
     packages=find_packages(),
     license='MIT',
+    description='Support the research during the Lehrexkursion.',
     long_description=open('README.md').read(),
     classifiers=[
         # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
