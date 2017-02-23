@@ -3,6 +3,8 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
+from lehrex import __version__
+
 if not sys.version_info >= (3, 5, 1):
     sys.exit('Only support Python version >=3.5.1.\n'
              'Found version is {}'.format(sys.version))
@@ -12,8 +14,8 @@ setup(
     author='Lukas Kluft',
     author_email='lukas.kluft@gmail.com',
     url='https://github.com/lkluft/lehrex',
-    download_url='https://github.com/lkluft/lehrex/tarball/0.4',
-    version='0.4',
+    download_url='https://github.com/lkluft/lehrex/tarball/' + __version__,
+    version=__version__,
     packages=find_packages(),
     license='MIT',
     description='Support the research during the Lehrexkursion.',
