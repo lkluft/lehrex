@@ -57,6 +57,7 @@ def _get_default_value(filename):
                     return default
         return np.nan
 
+
 def _get_names(filename):
     """Get variable names from CSV file header.
 
@@ -182,7 +183,8 @@ def read_profile(filename, var_regex=None, var_key='PROFILE', **kwargs):
     return output
 
 
-def read_scat(filename, var_regex='CLB_B\d{5}', var_key='CLB_MATRIX'):
+def read_scat(filename, var_regex='CLB_B\d{5}', var_key='CLB_MATRIX',
+              **kwargs):
     """Read scattering coefficients from CSV file.
 
     Parameters:
@@ -201,7 +203,7 @@ def read_scat(filename, var_regex='CLB_B\d{5}', var_key='CLB_MATRIX'):
         filename,
         var_key=var_key,
         var_regex=var_regex,
-        output=output,
+        **kwargs,
         )
 
     back_scat = output[var_key]
