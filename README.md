@@ -8,13 +8,17 @@ Universität Hamburg.
 * `lehrex.plots`: General plotting routines like timeseries or heatmaps.
 
 ## Installation
-For standard Python installations, install `lehrex` using `pip`:
+### Stable release
+For standard Python installations, install the latest stable version using `pip`:
 ```bash
 pip install lehrex
 ```
 
-If you want to do local changes to the package, you can install the cloned
-repository. In the root directory type:
+### Development
+If you want to do changes to the package, clone the repository and install the
+package locally:
 ```bash
+git clone https://github.com/lkluft/lehrex.git
+cd lehrex
 pip install --user --no-deps -e .
 ```
