@@ -2,6 +2,7 @@
 """Load CSV files stored in RAW format.
 """
 import numpy as np
+from matplotlib import dates
 
 
 __all__ = [
@@ -25,6 +26,11 @@ def _get_names(filename, delimiter=';', comments='%'):
             return line.strip().split(delimiter)
 
 
+def _get_mpl_start(filename):
+    with open(filename) as f:
+        return dates.datestr2num(':'.join(f.readline().split(':')[1:]))
+
+
 def _decimal_converter(filename, comments='%'):
     """Convert decimal separator from comma to period.
 
@@ -44,12 +50,13 @@ def _decimal_converter(filename, comments='%'):
             yield line.replace(',', '.').encode()
 
 
-def read_raw(filename, delimiter=';', comments='%', variables=None,
-             output=None, **kwargs):
+def read_raw(filename, datarate=20, delimiter=';', comments='%',
+             variables=None, output=None, **kwargs):
     """Read file in RAW format.
 
     Parameters:
         filename (str): Path to CSV file.
+        datarate (float): Measurement rate [Hz].
         delimiter (str): The string used to separate values.
         comments (str): The character used to indicate the start of a comment.
         filling_values (float): Value to use for missing values.
@@ -82,7 +89,11 @@ def read_raw(filename, delimiter=';', comments='%', variables=None,
         for var in variables:
             output[var] = data[var]
 
-    # TODO: Create time array using start time and data rate.
-    # output['MPLTIME'] = 42
+    # TODO: Parsing the actual data rate from file.
+    # Create time array using start time and data rate.
+    start = _get_mpl_start(filename)  # Start time in MPL format.
+    N = data.shape[0]  # Number of measurements.
+    dt = 1 / (24 * 60 * 60 * datarate)  # Time difference betwen measurements.
+    output['MPLTIME'] = np.arange(start, start + N * dt, dt)
 
     return output
