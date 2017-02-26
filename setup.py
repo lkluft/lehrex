@@ -30,6 +30,5 @@ setup(
     install_requires=[
         'matplotlib>=1.5.1',
         'numpy>=1.10.4',
-        'scipy>=0.17.1',
     ],
 )
