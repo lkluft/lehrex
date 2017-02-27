@@ -19,7 +19,7 @@ for v in variables:
         data_dict['MPLTIME'],
         data_dict[v],
         ylabel='Windstärke [m/s]',
-        label=lx.plots.get_label(v, var_desc=desc),
+        label=lx.plots.get_label(v, label='{name}', var_desc=desc),
         )
 
 fig.savefig(join('plots', 'wind_profile.pdf'))
