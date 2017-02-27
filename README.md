@@ -2,10 +2,11 @@
 Python package to support the research during the annual Lehrexkursion at
 Universität Hamburg.
 
-## Structure
-* `lehrex.csv`: Functions to read and write common files (e.g. `MASTER.txt`).
-* `lehrex.math`: Basic statistical functions (e.g. `moving_average`, `rmse`).
-* `lehrex.plots`: General plotting routines like timeseries or heatmaps.
+## Table of Contents
+* [Installation](#installation)
+  * [Stable release](#stable-release)
+  * [Development](#development)
+* [Package structure](#package-structure)
 
 ## Installation
 ### Stable release
@@ -22,3 +23,8 @@ git clone https://github.com/lkluft/lehrex.git
 cd lehrex
 pip install --user --no-deps -e .
 ```
+
+## Package structure
+* `lehrex.csv`: Functions to read and write common files (e.g. `MASTER.txt`).
+* `lehrex.math`: Basic statistical functions (e.g. `moving_average`, `rmse`).
+* `lehrex.plots`: General plotting routines like timeseries or heatmaps.
