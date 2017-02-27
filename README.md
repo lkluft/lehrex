@@ -33,33 +33,5 @@ pip install --user --no-deps -e .
 * `lehrex.plots`: General plotting routines like timeseries or heatmaps.
 
 ## Examples
-### Reading files
-```python
-import lehrex as lx
-
-data = lx.csv.read('MASTER.txt')
-```
-
-### Plotting a timeseries
-```python
-import matplotlib.pyplot as plt
-import lehrex as lx
-
-
-# Read radiation data.
-variables = ['G', 'R', 'L', 'E']
-data_dict = lx.csv.read('data/MASTER.txt')
-
-# Plot timeseries.
-fig, ax = plt.subplots()
-for v in variables:
-    lx.plots.timeseries(
-        data_dict['MPLTIME'],
-        data_dict[v],
-        ylabel=lx.plots.get_label(v, label='Radianz {unit}'),
-        label=lx.plots.get_label(v, label='{name}'),
-        )
-
-plt.show()
-```
-![Radiation](/doc/plots/radiation.png)
+* [Plot radiation measurements](examples/plot_radiation.py)
+* [Plot wind profile measurements](examples/plot_wind.py)
