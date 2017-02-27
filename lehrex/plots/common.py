@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 """Common variables and functions.
-
-Attributes:
-    variable_description (dict): Containing long names and units for variables.
-        The keys are the abbrevations used in `MASTER.txt`. The return value is
-        a tuple of strings `(name, unit)`.
 """
 __all__ = [
-    'variable_description',
+    'get_var_desc',
     'get_label',
 ]
 
 
-variable_description = {
+_variable_description = {
     'AH002': ('Absolute Feuchte 2 m', 'g/m³'),
     'ALB': ('Albedo', '1 '),
     'D': ('Diffuse Himmelsstrahlung', 'W/m²'),
@@ -68,25 +63,56 @@ variable_description = {
 }
 
 
-def get_label(key, label='{name} [{unit}]'):
+def get_var_desc():
+    """Get a copy of the default variable description.
+
+    Returns:
+        dict: Dict values are tuples containing full variable name and unit.
+            The keys are the abbrevations used in `MASTER.txt`.
+
+    Examples:
+        Add description for non-default variables:
+        >>> desc = lx.plots.get_var_desc()
+        >>> desc.update({'FOO': ('New variable', 'Unit')})
+        >>> lx.plots.get_label('FOO', var_desc=desc)
+        'New variable [Unit]'
+    """
+    return _variable_description.copy()
+
+
+def get_label(key, label='{name} [{unit}]', var_desc=None):
     """Return label for variable key.
 
     Parameters:
         key (str): Variable key.
         label (str): Format string to create the label.
             The variables `name` and `unit` can be used.
+        var_desc (dict): Dictionary with variable descriptions.
+            The value behind the key has to be a tuple of strings:
+                dict[key] = (name, unit)
+            If `None` a default set of variables is used.
     Returns:
         str: Variable specific label.
 
     Examples:
+        Get default axis label for variable key "TT002":
         >>> get_label('TT002')
         'Lufttemperature 2 m [K]'
 
+        Pass different format string for label:
         >>> get_label('TT002', label='{name} in {unit}')
         'Lufttemperatur in 2 m in K'
 
+        Set description for non-default variables:
+        >>> desc = lx.plots.get_var_desc()
+        >>> desc.update({'FOO': ('New variable', 'Unit')})
+        >>> get_label('FOO', var_desc=desc)
+        'New variable [Unit]'
     """
-    name, unit = variable_description.get(key, (key, ''))
+    if var_desc is None:
+        var_desc = _variable_description
+
+    name, unit = var_desc.get(key, (key, ''))
 
     kwargs = {
         'name': name,
