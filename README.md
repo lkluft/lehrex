@@ -8,8 +8,6 @@ Universität Hamburg.
   * [Development](#development)
 * [Package structure](#package-structure)
 * [Examples](#examples)
-    * [Reading files](#reading-files)
-    * [Plotting a timeseries](#plotting-a-timeseries)
 
 ## Installation
 ### Stable release
@@ -33,5 +31,14 @@ pip install --user --no-deps -e .
 * `lehrex.plots`: General plotting routines like timeseries or heatmaps.
 
 ## Examples
+The most basic use case of the `lehrex` package is the reading of data files:
+```python
+import lehrex as lx
+
+data = lx.csv.read('MASTER.txt')
+```
+
+The repository contains several [examples](examples) to show some more advanced
+applications. Resulting [plots](examples/plots) are also included.
 * [Plot radiation measurements](examples/plot_radiation.py)
 * [Plot wind profile measurements](examples/plot_wind.py)
