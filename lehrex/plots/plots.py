@@ -89,7 +89,7 @@ def timeseries2d(time, height, data, xlabel='Datum', ylabel='Höhe [m]',
 
     def_kwargs.update(kwargs)
 
-    ret = ax.pcolormesh(time, height, data, **kwargs)
+    ret = ax.pcolormesh(time, height, data, **def_kwargs)
 
     cb = ax.get_figure().colorbar(ret)
     cb.set_label(zlabel)

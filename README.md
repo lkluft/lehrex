@@ -42,3 +42,4 @@ The repository contains several [examples](examples) to show some more advanced
 applications. Resulting [plots](examples/plots) are also included.
 * [Plot radiation measurements](examples/plot_radiation.py)
 * [Plot wind profile measurements](examples/plot_wind.py)
+* [Plot ceilometer back scattering (2D)](examples/plot_ceilometer.py)
