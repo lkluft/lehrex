@@ -5,6 +5,7 @@ Attributes:
     VARIABLE_DTYPES (dict): Stores the dtype related to a variable name.
 """
 import re
+from warnings import warn
 
 from matplotlib.dates import strpdate2num
 import numpy as np
@@ -115,12 +116,8 @@ def read(filename, variables=None, delimiter=';', filling_values=np.nan,
     if filling_values is None:
         filling_values = _get_default_value(filename)
 
-    # Read DATE and TIME even if they are not explicitly listed.
-    if variables is not None:
-        usecols = list(set(variables + ['DATE', 'TIME']))
-    else:
+    if variables is None:
         variables = names.split(',')
-        usecols = None
 
     with open(filename, 'rb') as f:
         data = np.genfromtxt(
@@ -130,7 +127,7 @@ def read(filename, variables=None, delimiter=';', filling_values=np.nan,
             dtype=dtype,
             names=names,
             filling_values=filling_values,
-            usecols=usecols,
+            usecols=variables,
             **kwargs,
             )
 
@@ -141,9 +138,12 @@ def read(filename, variables=None, delimiter=';', filling_values=np.nan,
         for var in variables:
             output[var] = data[var]
 
-    # Always convert DATE and TIME into matplotlib time.
-    dates = [' '.join(d) for d in zip(data['DATE'], data['TIME'])]
-    output['MPLTIME'] = _get_mpl_date(dates)
+    # If present, convert DATE and TIME into matplotlib time.
+    if 'DATE' in output and 'TIME' in output:
+        dates = [' '.join(d) for d in zip(data['DATE'], data['TIME'])]
+        output['MPLTIME'] = _get_mpl_date(dates)
+    else:
+        warn('It is highly recommended to read the DATE and TIME variables!')
 
     return output
 
