@@ -10,7 +10,11 @@ data_dict = lx.csv.read('data/WERNER.txt')
 
 # Additional variable descriptions.
 desc = lx.plots.get_var_desc()
-desc.update({'W_FF%i' % i: ('Windfahne %i' % i, 'm/s') for i in [1, 3, 6]})
+desc.update({
+    'W_FF1': ('Windfahne 1', 'm/s'),
+    'W_FF3': ('Windfahne 3', 'm/s'),
+    'W_FF6': ('Windfahne 6', 'm/s'),
+})
 
 # Timeseries
 fig, ax = plt.subplots()
