@@ -33,8 +33,8 @@ def timeseries(time, data, xlabel='Datum', ylabel='', dateformat='%d.%m.',
     """Create a basic timeseries plot.
 
     Parameters:
-        time (nd.array): Date array in matplotlib time format.
-        data (nd.array): Data array.
+        time (array): Date array in matplotlib time format.
+        data (array): Data array.
         xlabel (str): x label.
         ylabel (str): y label.
         dateformat (str): Format string for date labels on xaxis.
@@ -43,7 +43,6 @@ def timeseries(time, data, xlabel='Datum', ylabel='', dateformat='%d.%m.',
 
     Returns:
         Line2D: A line.
-
     """
     if ax is None:
         ax = plt.gca()
@@ -65,9 +64,9 @@ def timeseries2d(time, height, data, xlabel='Datum', ylabel='Höhe [m]',
     """Create a basic 2D timeseries plot.
 
     Parameters:
-        time (nd.array): Date array in matplotlib time format.
-        height (nd.array): Height array.
-        data (nd.array): Data array.
+        time (array): Date array in matplotlib time format.
+        height (array): Height array.
+        data (array): Data array.
         xlabel (str): x label.
         ylabel (str): y label.
         zlabel (str): Colorbar label.
@@ -77,7 +76,6 @@ def timeseries2d(time, height, data, xlabel='Datum', ylabel='Höhe [m]',
 
     Returns:
         Line2D: A line.
-
     """
     if ax is None:
         ax = plt.gca()
@@ -107,8 +105,8 @@ def heatmap(x, y, bins=20, zlabel='Anzahl', rasterized=True,
     """Plot a heatmap of given data.
 
     Parameters:
-        x (np.ndarray): x data.
-        y (np.ndarray): y data.
+        x (ndarray): x data.
+        y (ndarray): y data.
         bins (None | int | [int, int] | array_like | [array, array]):
 
             The bin specification:

@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 """Load CSV files stored in Wettermast format.
-
-Attributes:
-    VARIABLE_DTYPES (dict): Stores the dtype related to a variable name.
 """
 import re
 from warnings import warn
@@ -28,7 +25,7 @@ def _get_mpl_date(dates, fmt='%d.%m.%Y %H:%M'):
     """Convert date strings into matplotlib time format.
 
     Parameters:
-        dates (np.array): Array containing date strings.
+        dates (ndarray): Array containing date strings.
         fmt (str): Date string format [0].
 
     [0] http://pubs.opengroup.org/onlinepubs/009695399/functions/strptime.html
@@ -161,7 +158,7 @@ def read_profile(filename, var_regex=None, var_key='PROFILE', **kwargs):
     [0] https://docs.python.org/3.1/library/re.html
 
     Returns:
-        np.ndarray: Profile.
+        dict: Dictionary containing the data arrays and the stacked profile.
     """
     profile_key = var_key + '_Z'
 
@@ -197,7 +194,7 @@ def read_scat(filename, var_regex='CLB_B\d{5}', var_key='CLB_MATRIX',
     [0] https://docs.python.org/3.1/library/re.html
 
     Returns:
-        np.array, np.array: scattering coefficient, height levels
+        ndarray, ndarray: scattering coefficient, height levels
     """
     output = read_profile(
         filename,

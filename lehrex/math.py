@@ -19,14 +19,13 @@ def moving_average(x, y, N, mode='same'):
     """Calculate running mean for given timeseries.
 
     Parameters:
-        x (np.ndarray): x data.
-        y (np.ndarray): y data.
+        x (ndarray): x data.
+        y (ndarray): y data.
         N (int): Window size.
         mode (str): Convolve mode 'valid' or 'same'.
 
     Returns:
-        np.ndarray, np.ndarray: Adjusted x data, Averaged y data.
-
+        ndarray, np.ndarray: Adjusted x data, Averaged y data.
     """
     if mode == 'valid':
         l, t = N//2, -N//2 + 1
@@ -44,12 +43,12 @@ def block_average(x, y, N):
     """Calculate the average over windows of size N.
 
     Parameters:
-        x (np.ndarray): x data.
-        y (np.ndarray): y dat.
+        x (ndarray): x data.
+        y (ndarray): y dat.
         N (int): Window size to average.
 
     Returns:
-        np.ndarray, np.ndarray: Every n-th x value, Corresponding averages.
+        ndarray, ndarray: Every n-th x value, Corresponding averages.
     """
     x = x[N-1::N]
     y = np.array([np.nanmean(v) for v in np.split(y, y.size / N)])
@@ -73,7 +72,7 @@ def bootstrap(x, size=None):
             single value is returned.
 
     Returns:
-        np.ndarray, shape (size,): The generated random samples.
+        ndarray, shape (size,): The generated random samples.
     """
     return np.random.choice(x, size=size, replace=True)
 
@@ -82,8 +81,8 @@ def rmse(x, y):
     """Calculate the Root Mean Squared Error.
 
     Parameters:
-        x (np.ndarray): First data array.
-        y (np.ndarray): Second data array.
+        x (ndarray): First data array.
+        y (ndarray): Second data array.
 
     Returns:
         float: RMSE
@@ -95,8 +94,8 @@ def correlation(x, y):
     """Return single correlatin coefficient.
 
     Parameters:
-        x (np.ndarray): First data array.
-        y (np.ndarray): Second data array.
+        x (ndarray): First data array.
+        y (ndarray): Second data array.
 
     Returns:
         float: Correlation coefficient.
@@ -107,15 +106,15 @@ def correlation(x, y):
 
 
 def compare_arrays(x, y, verbose=False):
-    """Perform a simple statistic comparison of two arrays.
+    """Perform a simple comparison of two arrays.
 
     Parameters:
-        x (np.ndarray): First data array.
-        y (np.ndarray): Second data array.
+        x (ndarray): First data array.
+        y (ndarray): Second data array.
         verbose (bool): Print output.
 
     Returns:
-        nametuple: Statisticl comparison of input arrays.
+        namedtuple: Statistical comparison of two arrays.
     """
 
     ArrayComparison = collections.namedtuple(
