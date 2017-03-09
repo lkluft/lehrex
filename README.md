@@ -29,6 +29,7 @@ pip install --user --no-deps -e .
 * `lehrex.csv`: Functions to read and write common files (e.g. `MASTER.txt`).
 * `lehrex.math`: Basic statistical functions (e.g. `moving_average`, `rmse`).
 * `lehrex.plots`: General plotting routines like timeseries or heatmaps.
+* `lehrex.utils`: Basic utility functions (e.g. combining data dictionaries).
 
 ## Examples
 The most basic use case of the `lehrex` package is the reading of data files:
@@ -42,4 +43,5 @@ The repository contains several [examples](examples) to show some more advanced
 applications. Resulting [plots](examples/plots) are also included.
 * [Plot radiation measurements](examples/plot_radiation.py)
 * [Plot wind profile measurements](examples/plot_wind.py)
+* [Combine several timeseries](examples/combine_timeseries.py)
 * [Plot ceilometer back scattering (2D)](examples/plot_ceilometer.py)
