@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lkluft/lehrex.svg?branch=master)](https://travis-ci.org/lkluft/lehrex)
+
 # lehrex
 Python package to support the research during the annual Lehrexkursion at
 Universität Hamburg.
