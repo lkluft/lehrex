@@ -1,3 +1,4 @@
 --index-url https://pypi.python.org/simple/
 
--e .
+matplotlib>=1.5.1
+numpy>=1.10.4
