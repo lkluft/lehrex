@@ -3,7 +3,7 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
-from lehrex import __version__
+from lehrex.version import __version__
 
 if not sys.version_info >= (3, 5, 1):
     sys.exit('Only support Python version >=3.5.1.\n'

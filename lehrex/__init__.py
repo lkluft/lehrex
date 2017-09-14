@@ -7,6 +7,8 @@ from . import math
 from . import plots
 from . import utils
 
+from .version import __version__
+
 
 __all__ = [
     'csv',
@@ -14,5 +16,3 @@ __all__ = [
     'plots',
     'utils',
 ]
-
-__version__ = '0.8'
