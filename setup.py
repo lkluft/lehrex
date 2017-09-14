@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import sys
 from distutils.core import setup
+from os.path import dirname, join
 from setuptools import find_packages
 
-from lehrex.version import __version__
 
 if not sys.version_info >= (3, 5, 1):
     sys.exit('Only support Python version >=3.5.1.\n'
              'Found version is {}'.format(sys.version))
+
+__version__ = open(join(dirname(__file__), 'lehrex', 'VERSION')).read().strip()
 
 setup(
     name='lehrex',
