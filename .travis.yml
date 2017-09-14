@@ -3,7 +3,7 @@ python:
   - "3.5"
   - "3.6"
 install:
-  - pip uninstall -y matplotlib
   - pip install .
+  - pwd
 script:
   - nosetests
