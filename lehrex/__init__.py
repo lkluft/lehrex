@@ -18,11 +18,3 @@ __all__ = [
     'plots',
     'utils',
 ]
-
-
-class Test:
-    def foo(self):
-        return f"{self}"
-
-
-Test()
