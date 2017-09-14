@@ -9,4 +9,5 @@
 """
 class TestClass():
     def test_basic(self):
-        import lehrex
+        test = "foo"
+        s = "{test}"
