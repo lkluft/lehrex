@@ -10,4 +10,4 @@
 class TestClass():
     def test_basic(self):
         test = "foo"
-        s = "{test}"
+        s = f"{test}"
