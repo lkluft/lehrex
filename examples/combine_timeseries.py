@@ -23,4 +23,4 @@ for v in ['G', 'R', 'L', 'E']:
         label=lx.plots.get_label(v, label='{name}'),
         )
 
-fig.savefig(join('plots', 'radiation_extended.pdf'))
+fig.savefig(join('plots', 'radiation_extended.svg'))

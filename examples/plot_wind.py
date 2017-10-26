@@ -26,4 +26,4 @@ for v in variables:
         label=lx.plots.get_label(v, label='{name}', var_desc=desc),
         )
 
-fig.savefig(join('plots', 'wind_profile.pdf'))
+fig.savefig(join('plots', 'wind_profile.svg'))

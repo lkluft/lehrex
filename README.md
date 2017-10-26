@@ -44,6 +44,17 @@ data = lx.csv.read('MASTER.txt')
 The repository contains several [examples](examples) to show some more advanced
 applications. Resulting [plots](examples/plots) are also included.
 * [Plot radiation measurements](examples/plot_radiation.py)
+
+  ![Radiation](examples/plots/radiation.svg)
+
 * [Plot wind profile measurements](examples/plot_wind.py)
+
+  ![Wind](examples/plots/wind_profile.svg)
+
 * [Combine several timeseries](examples/combine_timeseries.py)
+
+  ![Radiation extended](examples/plots/radiation_extended.svg)
+
 * [Plot ceilometer back scattering (2D)](examples/plot_ceilometer.py)
+
+  ![Backscatter](examples/plots/backscatter.svg)

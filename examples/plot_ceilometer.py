@@ -20,4 +20,4 @@ lx.plots.timeseries2d(
     cmap=plt.get_cmap('Blues', 10),
 )
 
-fig.savefig(join('plots', 'backscatter.pdf'))
+fig.savefig(join('plots', 'backscatter.svg'))
