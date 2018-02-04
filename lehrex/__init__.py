@@ -5,6 +5,7 @@ the annual Lehrexkursion at Universität Hamburg.
 from os.path import dirname, join
 
 from . import csv
+from .csv import (read, write)
 from . import math
 from . import plots
 from . import utils
@@ -16,5 +17,7 @@ __all__ = [
     'csv',
     'math',
     'plots',
+    'read',
+    'write',
     'utils',
 ]

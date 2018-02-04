@@ -2,10 +2,11 @@
 """Load CSV files stored in Wettermast format.
 """
 import re
-from warnings import warn
+from datetime import datetime
 
-from matplotlib.dates import strpdate2num
 import numpy as np
+import pandas as pd
+from matplotlib.dates import strpdate2num
 
 
 __all__ = [
@@ -14,11 +15,6 @@ __all__ = [
     'read_scat',
     'write',
 ]
-
-VARIABLE_DTYPES = {
-    'DATE': '<U10',
-    'TIME': '<U5',
-}
 
 
 def _get_mpl_date(dates, fmt='%d.%m.%Y %H:%M'):
@@ -36,113 +32,63 @@ def _get_mpl_date(dates, fmt='%d.%m.%Y %H:%M'):
     return np.array([strpdate2num(fmt)(d) for d in dates])
 
 
-def _get_default_value(filename):
-    """Get default value for missing data from CSV file header.
-
-    Parameters:
-        filename (str): Path to CSV file.
-
-    Returns:
-        float or str: Default value for mising values.
-    """
-    with open(filename, "rb") as f:
-        for line in f:
-            if line.decode().startswith('$DefaultValue='):
-                default = line.decode().split('=')[1]
-                try:
-                    return int(default)
-                except:
-                    return default
-        return np.nan
+def _get_datetime(dataframe):
+    """Convert 'DATE' and 'TIME' columns into list of datetime objects."""
+    return [datetime.strptime(' '.join([d, t]), '%d.%m.%Y %H:%M')
+            for d, t in zip(dataframe['DATE'], dataframe['TIME'])]
 
 
 def _get_names(filename):
-    """Get variable names from CSV file header.
-
-    Parameters:
-        filename (str): Path to CSV file.
-
-    Returns:
-        str: Comma separated list of variable names.
-    """
+    """Return list of variable names."""
     with open(filename, "rb") as f:
         for line in f:
             if line.decode().startswith('$Names='):
-                return line.decode().split('=')[1].replace(';', ',').strip()
+                return line.decode().split('=')[1].strip().split(';')
     raise Exception('No field names were found.')
 
 
 def _get_skip_header(filename):
-    """Get number of lines to skip header of CSV file.
-
-    Parameters:
-        filename (str): Path to CSV file.
-
-    Returns:
-        int: Number of lines to skip at the beginning of the file.
-    """
-    i = 0
+    """Return number of lines to skip at the beginning of the file."""
     with open(filename, 'rb') as f:
-        for line in f:
-            if line.decode()[0] == '$' or line.decode()[0] == '#':
-                i += 1
-            else:
+        for i, line in enumerate(f):
+            if (not line.decode().startswith('$') and
+                not line.decode().startswith('#')):
+                # Return number of first non-comment line.
                 return i
+
     raise Exception('No valid line found.')
 
 
-def read(filename, variables=None, delimiter=';', filling_values=np.nan,
-         output=None, **kwargs):
-    """Read CSV files.
+def read(filename, delimiter=';', output=None, **kwargs):
+    """Read CSV file into DataFrame.
 
     Parameters:
         filename (str): Path to CSV file.
-        variables (List[str]): List of variables to extract.
         delimiter (str): The string used to separate values.
-        filling_values (float): Value to use for missing values.
-            If `None`, use the `DefaultValue` specified in file header.
-        output (dict): Dictionary that is updated with read data.
-        **kwargs: Additional keyword arguments passed to `np.genfromtxt`.
+        output (pd.DataFrame): Append data to given DataFrame.
+        **kwargs: Additional keyword arguments passed to `pd.read_csv`.
 
     Returns:
-        dict: Dictionary containing the data arrays.
+        pd.DataFrame: DataFrame representing the timeseries.
     """
-    skip_header = _get_skip_header(filename)
-    names = _get_names(filename)
-    dtype = [(n, VARIABLE_DTYPES.get(n, 'f8')) for n in names.split(',')]
-    if filling_values is None:
-        filling_values = _get_default_value(filename)
+    # Parse CSV file and create `pandas.DataFrame`.
+    df = pd.read_csv(
+        filename,
+        delimiter=delimiter,
+        skiprows=_get_skip_header(filename),
+        names=_get_names(filename),
+        **kwargs,
+    )
 
-    if variables is None:
-        variables = names.split(',')
+    # Convert 'DATE' and 'TIME' columns into datetime objects and use them
+    # as DataFrame index.
+    df['DATETIME'] = _get_datetime(df)
+    df = df.set_index('DATETIME')
 
-    with open(filename, 'rb') as f:
-        data = np.genfromtxt(
-            f,
-            delimiter=delimiter,
-            skip_header=skip_header,
-            dtype=dtype,
-            names=names,
-            filling_values=filling_values,
-            usecols=variables,
-            **kwargs,
-            )
+    if output is not None:
+        df = output.append(df)
 
-    # Convert structured array to dictionary.
-    if output is None:
-        output = {var: data[var] for var in variables}
-    else:
-        for var in variables:
-            output[var] = data[var]
-
-    # If present, convert DATE and TIME into matplotlib time.
-    if 'DATE' in output and 'TIME' in output:
-        dates = [' '.join(d) for d in zip(data['DATE'], data['TIME'])]
-        output['MPLTIME'] = _get_mpl_date(dates)
-    else:
-        warn('It is highly recommended to read the DATE and TIME variables!')
-
-    return output
+    return df
 
 
 def read_profile(filename, var_regex=None, var_key='PROFILE', **kwargs):
@@ -216,22 +162,20 @@ def write(filename, data, variables=None):
 
     Parameters:
         filename (str): Path to CSV file.
-        data (dict): Dictionary containing data.
+        data (pd.Dataframe or dict-like): DataFrame or dict-like.
         variables (list[str]): Variables to store.
     """
     if not ('DATE' in data and 'TIME' in data):
-        raise Exception('Need DATE and TIME to write proper files.')
+        raise Exception('Need DATE and TIME column to write proper files.')
 
     if variables is None:
         variables = list(sorted(data.keys()))
-        # Write date and time to first columns.
-        for k in ['TIME', 'DATE']:
-            if k in variables:
-                variables.remove(k)
-                variables.insert(0, k)
 
-    # Never write MPLTIME. It is created when reading anyways.
-    variables.remove('MPLTIME')
+    # Write date and time to first columns.
+    for k in ['TIME', 'DATE']:
+        if k in variables:
+            variables.remove(k)
+        variables.insert(0, k)
 
     # Convert dictionart entries to data matrix.
     data_matrix = np.vstack(data[v] for v in variables).T
@@ -262,4 +206,4 @@ def write(filename, data, variables=None):
         delimiter=';',
         header=header,
         fmt='%s',
-        )
+    )
