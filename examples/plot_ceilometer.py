@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-from os.path import join
-
 import matplotlib.pyplot as plt
 import lehrex as lex
 
 
 # Read back scattering data.
-df = lex.read(join('data', 'CLB.txt'))
+df = lex.read('data/CLB.txt')
 scattering, z = lex.utils.stack_series(df, regex='CLB_B\d{5}')
 
 # Timeseries
@@ -21,4 +19,4 @@ lex.plots.timeseries2d(
     rasterized=True,
 )
 
-fig.savefig(join('plots', 'backscatter.svg'))
+fig.savefig('plots/backscatter.svg')
