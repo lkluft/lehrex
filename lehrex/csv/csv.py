@@ -11,8 +11,6 @@ from matplotlib.dates import strpdate2num
 
 __all__ = [
     'read',
-    'read_profile',
-    'read_scat',
     'write',
 ]
 
@@ -89,72 +87,6 @@ def read(filename, delimiter=';', output=None, **kwargs):
         df = output.append(df)
 
     return df
-
-
-def read_profile(filename, var_regex=None, var_key='PROFILE', **kwargs):
-    """Read scattering coefficients from CSV file.
-
-    Parameters:
-        filename (str): Path to CSV file.
-        var_regex (str): Python regular expression [0] matching
-            the variable name of the profile.
-        var_key (str): Dictionary key for extracted profile.
-        **kwargs: Additional keyword arguments passed to `read`.
-
-    [0] https://docs.python.org/3.1/library/re.html
-
-    Returns:
-        dict: Dictionary containing the data arrays and the stacked profile.
-    """
-    profile_key = var_key + '_Z'
-
-    output = read(filename, **kwargs)
-
-    p = re.compile(var_regex)
-
-    var_names = [var for var in output.keys() if p.match(var)]
-    var_names.sort()
-
-    profile = np.vstack([output[v] for v in var_names])
-
-    z = [float(re.sub('[^0-9]', '', v)) for v in var_names]
-
-    # Extract height information from variable name.
-    output[var_key] = np.ma.masked_invalid(profile)
-    output[profile_key] = np.array(z)
-
-    return output
-
-
-def read_scat(filename, var_regex='CLB_B\d{5}', var_key='CLB_MATRIX',
-              **kwargs):
-    """Read scattering coefficients from CSV file.
-
-    Parameters:
-        filename (str): Path to CSV file.
-        var_regex (str): Python regular expression [0] matching
-            the variable name of the profile.
-        var_key (str): Dictionary key for extracted profile.
-        **kwargs: Additional keyword arguments passed to `read_profile`.
-
-    [0] https://docs.python.org/3.1/library/re.html
-
-    Returns:
-        ndarray, ndarray: scattering coefficient, height levels
-    """
-    output = read_profile(
-        filename,
-        var_key=var_key,
-        var_regex=var_regex,
-        **kwargs,
-        )
-
-    back_scat = output[var_key]
-    back_scat = np.ma.masked_less(back_scat, 0)
-
-    output[var_key] = back_scat
-
-    return output
 
 
 def write(filename, data, variables=None):

@@ -1,33 +1,45 @@
 # -*- coding: utf-8 -*-
 """General utility functions.
 """
+import re
+
 import numpy as np
 
 
 __all__ = [
-    'stack_dicts',
+    'stack_series',
 ]
 
 
-def stack_dicts(a, b, *args, variables=None):
-    """Stack the entries of given dictionaries.
+def stack_series(dataframe, regex=None):
+    """Stack all Series in the DataFrame that match a given regular expression.
 
-    This function stacks the entries of (at least) two dictionaries. The data
-    arrays stored with a specific key are combined using `np.hstack` and
-    returned in a new dictionary. The variable keys have to exist in every
-    given dictionary.
+    This function converts data series into a multidimensional array (e.g.
+    time series of height resolved data).
 
     Parameters:
-        a, b (dict): Data dictionaries.
-        *args: Arbitrary number of additional dictionaries.
-        variables (list[str]): List of variables to extract and stack.
+        dataframe (pd.DataFrame): Dataframe.
+        regex (str): Python regular expression [0] matching
+            the variable names of the profile.
+
+    [0] https://docs.python.org/3.1/library/re.html
 
     Returns:
-        dict: Dictionary containing the stacked data arrays.
+        ndarray, ndarray: data array, height levels.
+
+    Examples:
+        >>> import lehrex as lex
+        >>> df = lex.read('CLB.txt')
+        >>> p, z = lex.utils.stack_series(df, regex='CLB_B\d{5}')
+
     """
-    if variables is None:
-        variables = a.keys()
+    # Find all variable keys matching the given regular expression.
+    pattern = re.compile(regex)
+    var_names = list(filter(pattern.match, dataframe.keys()))
 
-    dicts = [a, b] + list(args)
+    profile = np.vstack([dataframe[v] for v in sorted(var_names)])
 
-    return {k: np.hstack([d[k] for d in dicts]) for k in variables}
+    # Retrieve height information from variable names.
+    z = [float(re.sub('[^0-9]', '', v)) for v in var_names]
+
+    return np.ma.masked_invalid(profile), np.array(z)
