@@ -2,22 +2,23 @@
 from os.path import join
 
 import matplotlib.pyplot as plt
-import lehrex as lx
+import lehrex as lex
 
 
 # Read back scattering data.
-data_dict = lx.csv.read_scat('data/CLB.txt')
+df = lex.read(join('data', 'CLB.txt'))
+scattering, z = lex.utils.stack_series(df, regex='CLB_B\d{5}')
 
 # Timeseries
 fig, ax = plt.subplots(figsize=(6.5, 4))
-lx.plots.timeseries2d(
-    data_dict['MPLTIME'],
-    data_dict['CLB_MATRIX_Z'],
-    data_dict['CLB_MATRIX'],
+lex.plots.timeseries2d(
+    df.index, z, scattering,
     dateformat='%H:%M',
     xlabel='Uhrzeit [HH:MM]',
     zlabel='Rückstreuintensität',
     cmap=plt.get_cmap('Blues', 10),
+    vmin=0,
+    rasterized=True,
 )
 
 fig.savefig(join('plots', 'backscatter.svg'))

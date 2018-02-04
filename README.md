@@ -28,17 +28,17 @@ pip install --user --no-deps -e .
 ```
 
 ## Package structure
-* `lehrex.csv`: Functions to read and write common files (e.g. `MASTER.txt`).
+* `lehrex.csv`: Functions to read and write CSV files (e.g. `MASTER.txt`).
 * `lehrex.math`: Basic statistical functions (e.g. `moving_average`, `rmse`).
 * `lehrex.plots`: General plotting routines like timeseries or heatmaps.
 * `lehrex.utils`: Basic utility functions (e.g. combining data dictionaries).
 
 ## Examples
-The most basic use case of the `lehrex` package is the reading of data files:
+The most common use case is reading data files into `pd.DataFrame`:
 ```python
-import lehrex as lx
+import lehrex as lex
 
-data = lx.csv.read('MASTER.txt')
+dataframe = lex.read('MASTER.txt')
 ```
 
 The repository contains several [examples](examples) to show some more advanced
