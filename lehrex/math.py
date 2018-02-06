@@ -63,7 +63,7 @@ def bootstrap(x, size=None):
         This function is a simple wrapper for np.random.choice
 
     Parameters:
-        a (1-D array-like or int):
+        x (1-D array-like or int):
             If an ndarray, a random sample is generated from its elements.
             If an int, the random sample is generated as if a was np.arange(n)
         size (int or tuple of ints): Output shape.
