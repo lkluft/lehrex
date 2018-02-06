@@ -14,19 +14,16 @@ __all__ = [
 
 
 def _parse_starttime(filename):
-    """Parse start time from file header and return datetime object."""
+    """Parse start time from file header and return date string."""
     with open(filename, 'rt', encoding='UTF-8', errors='ignore') as f:
         header = f.readline()
 
     return re.compile('.*: (.*) UTC.*').match(header).group(1)
 
 
-def _get_date_range(filename, freq, periods):
+def _get_date_range(filename, freq, periods, datefmt='%d.%m.%Y %H:%M:%S,%f'):
     """Return array of datetime objects from file."""
-    start = datetime.strptime(
-        _parse_starttime(filename),
-        '%d.%m.%Y %H:%M:%S,%f'
-    )
+    start = datetime.strptime(_parse_starttime(filename), datefmt)
 
     return pd.date_range(start, freq=freq, periods=periods)
 
