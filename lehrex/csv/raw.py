@@ -29,7 +29,7 @@ def _get_date_range(filename, freq, periods, datefmt='%d.%m.%Y %H:%M:%S,%f'):
 
 
 def read_raw(filename, freq='50ms', decimal=',', delimiter=';', comment='%',
-             header=0, output=None, **kwargs):
+             header=0, **kwargs):
     """Read file in RAW format.
 
     Parameters:
@@ -40,7 +40,6 @@ def read_raw(filename, freq='50ms', decimal=',', delimiter=';', comment='%',
         comment (str): The character used to indicate a comment line.
         header (int): Row number to use as the column names.
             See `pd.read_csv` for further information.
-        output (pd.DataFrame): DataFrame to append read data to.
         **kwargs: Additional keyword arguments passed to `pd.read_csv`.
 
     Returns:
@@ -65,9 +64,5 @@ def read_raw(filename, freq='50ms', decimal=',', delimiter=';', comment='%',
     else:
         # Use date range as index if it is parsed correctly.
         df = df.set_index('DATETIME')
-
-    # Convert structured array to dictionary.
-    if output is not None:
-        return output.append(df)
 
     return df

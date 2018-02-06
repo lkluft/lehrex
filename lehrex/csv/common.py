@@ -57,13 +57,12 @@ def _get_skip_header(filename):
     raise Exception('No valid line found.')
 
 
-def read(filename, delimiter=';', output=None, **kwargs):
+def read(filename, delimiter=';', **kwargs):
     """Read CSV file into DataFrame.
 
     Parameters:
         filename (str): Path to CSV file.
         delimiter (str): The string used to separate values.
-        output (pd.DataFrame): Append data to given DataFrame.
         **kwargs: Additional keyword arguments passed to `pd.read_csv`.
 
     Returns:
@@ -82,9 +81,6 @@ def read(filename, delimiter=';', output=None, **kwargs):
     # as DataFrame index.
     df['DATETIME'] = _get_datetime(df)
     df = df.set_index('DATETIME')
-
-    if output is not None:
-        df = output.append(df)
 
     return df
 

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
+import glob
+
 import matplotlib.pyplot as plt
 import lehrex as lex
+import pandas as pd
 
 
-# Read three radiation timeseries into one DataFrame.
-df = lex.read('data/MASTER0.txt')
-df = lex.read('data/MASTER1.txt', output=df)
-df = lex.read('data/MASTER2.txt', output=df)
+# Read three input files and concatenate them to one DataFrame.
+df = pd.concat(map(lex.read, glob.iglob('data/MASTER*.txt')))
 
 # Plot timeseries.
 fig, ax = plt.subplots()
