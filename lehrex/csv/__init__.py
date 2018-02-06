@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Basic I/O functionality for files in Wettermast format.
 """
-from lehrex.csv.csv import *  # noqa
+from lehrex.csv.common import *  # noqa
 from lehrex.csv.raw import *  # noqa
 
 
