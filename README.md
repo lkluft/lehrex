@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lkluft/lehrex.svg?branch=master)](https://travis-ci.org/lkluft/lehrex)
+[![PyPI version](https://badge.fury.io/py/lehrex.svg)](https://badge.fury.io/py/lehrex)[![Build Status](https://travis-ci.org/lkluft/lehrex.svg?branch=master)](https://travis-ci.org/lkluft/lehrex)
 
 # lehrex
 Python package to support the research during the annual Lehrexkursion at
