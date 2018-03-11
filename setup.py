@@ -16,7 +16,7 @@ setup(
     author='Lukas Kluft',
     author_email='lukas.kluft@gmail.com',
     url='https://github.com/lkluft/lehrex',
-    download_url='https://github.com/lkluft/lehrex/tarball/' + __version__,
+    download_url='https://github.com/lkluft/lehrex/tarball/v' + __version__,
     version=__version__,
     packages=find_packages(),
     license='MIT',
