@@ -19,12 +19,12 @@ pip install lehrex
 ```
 
 ### Development
-If you want to do changes to the package, clone the repository and install the
-package locally:
+If you want to make local changes to the package, clone the repository and
+install the package locally:
 ```bash
 git clone https://github.com/lkluft/lehrex.git
 cd lehrex
-pip install --user --no-deps -e .
+pip install --editable .
 ```
 
 ## Package structure
