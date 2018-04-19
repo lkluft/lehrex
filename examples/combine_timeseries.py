@@ -12,5 +12,4 @@ for v in ['G', 'R', 'L', 'E']:
     lex.plots.timeseries(df, v)
 ax.set_ylabel(lex.plots.get_label('G', label='Radianz [{unit}]'))
 
-# fig.savefig('plots/radiation_extended.svg')
-plt.show()
+fig.savefig('plots/radiation_extended.svg')
