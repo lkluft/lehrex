@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Load CSV files stored in Wettermast format.
 """
-import re
+from collections import Iterable
+from glob import iglob
 from datetime import datetime
 
 import numpy as np
@@ -11,6 +12,7 @@ from matplotlib.dates import strpdate2num
 
 __all__ = [
     'read',
+    'read_mfdataset',
     'write',
 ]
 
@@ -49,8 +51,7 @@ def _get_skip_header(filename):
     """Return number of lines to skip at the beginning of the file."""
     with open(filename, 'rb') as f:
         for i, line in enumerate(f):
-            if (not line.decode().startswith('$') and
-                not line.decode().startswith('#')):
+            if not line.decode().startswith(('$', '#')):
                 # Return number of first non-comment line.
                 return i
 
@@ -58,7 +59,7 @@ def _get_skip_header(filename):
 
 
 def read(filename, delimiter=';', **kwargs):
-    """Read CSV file into DataFrame.
+    """Read CSV file into a `pd.DataFrame`.
 
     Parameters:
         filename (str): Path to CSV file.
@@ -83,6 +84,26 @@ def read(filename, delimiter=';', **kwargs):
     df = df.set_index('DATETIME')
 
     return df
+
+
+def read_mfdataset(file):
+    """Read multiple CSV files and merge their data into one `pd.DataFrame`.
+
+    Parameters:
+       file (str or iterable): Either a string glob in the form
+            “path/to/my/files/*.csv” or an iterable of files to read.
+
+    Returns:
+        pd.DataFrame: DataFrame storing the concatenated timeseries.
+    """
+    if isinstance(file, str):
+        fiterator = iglob(file)
+    elif isinstance(file, Iterable):
+        fiterator = file
+    else:
+        raise TypeError('`file` has to be a glob string or iterable of paths.')
+
+    return pd.concat(map(read, fiterator)).sort_index()
 
 
 def write(filename, data, variables=None):
