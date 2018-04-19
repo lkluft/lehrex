@@ -4,7 +4,6 @@
 from os.path import dirname, join
 
 from .csv import *
-from . import math
 from . import plots
 from . import utils
 

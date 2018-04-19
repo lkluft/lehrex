@@ -29,7 +29,6 @@ pip install --editable .
 
 ## Package structure
 * `lehrex.csv`: Functions to read and write CSV files (e.g. `MASTER.txt`).
-* `lehrex.math`: Basic statistical functions (e.g. `moving_average`, `rmse`).
 * `lehrex.plots`: General plotting routines like timeseries or heatmaps.
 * `lehrex.utils`: Basic utility functions (e.g. combining data dictionaries).
 
